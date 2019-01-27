@@ -123,94 +123,6 @@ def _mouse_event(x, y):
 @mouse_event.register(_TkEvent)
 def _mouse_event(event):
     return MouseEvent(event.x//16, event.y//16, _event(event.x, event.y))
-
-##class MouseEvent:
-##    
-##    def __init__(self, event, gx, gy, cx, cy):
-##        self._event = event
-##        self.grid_x, self.grid_y = self.grid = gx, gy
-##        self.canvas_x, self.canvas_y = self.canvas = cx, cy
-##        
-##    def tkevent_delta(self, other):
-##        return self._event.x - other._event.x, self._event.y - other._event.y
-##    
-##    def canvas_delta(self, other):
-##        return self.canvas_x - other.canvas_x, self.canvas_y - other.canvas_y
-##
-##    def grid_delta(self, other):
-##        return self.grid_x - other.grid_x, self.grid_y - other.grid_y
-##
-##    def __hash__(self):
-##        return hash((type(self), self.grid))
-##
-##    def __eq__(self, other):
-##        return hash((type(self), self.grid)) == hash(other)
-##
-##    def _dump(self):
-##        data = bytes(self.grid)
-##        data+= ((self.canvas_x << 12) + self.canvas_y).to_bytes(3,'little')
-##        return data
-##
-##    def __matmul__(self, other):
-##        x, y, xo, yo, mbw, mbh = other
-##        x = max(0, min(self._event.x + x * 16, mbw))
-##        y = max(0, min(self._event.y + y * 16, mbh))
-##        return mouse_event(_SimpleMouseEvent(x, y), xo, yo, mbw-1, mbh-1)
-##
-##    def __imatmul__(self, other):
-##        new = self.__matmul__(other)
-##        self._event = new._event
-##        self.grid_x, self.grid_y = self.grid = new.grid
-##        self.canvas_x, self.canvas_y = self.canvas = new.canvas
-##        return self
-##
-##    def __reduce__(self):
-##        data = b''.join(i.to_bytes(1,'little') for i in self.grid)
-##        data+= ((self.canvas_x << 12) + self.canvas_y).to_bytes(3, 'little')
-##        return self._rebuild, (data,)
-##
-##    @classmethod
-##    def _rebuild(cls, data):
-##        gx, gy = data[:2]
-##        c = int.from_bytes(data[2:],'little')
-##        cx = c >> 12
-##        cy = c & 4095
-##        return cls(_SimpleMouseEvent(cx, cy), gx, gy, cx, cy)
-##
-##    def __repr__(self):
-##        t = type(self)
-##        name = f'{t.__module__}.{t.__name__}'
-##        return f'<{name} grid={self.grid} canvas={self.canvas}>'
-##    
-##class _SimpleMouseEvent:
-##    def __init__(self, x, y):
-##        self.x = x
-##        self.y = y
-##        
-##@functools.singledispatch
-##def mouse_event(event, xoffset=0, yoffset=0, maxwidth =None, maxheight=None):
-##    
-##    x = max(0, min(event.x, maxwidth))
-##    y = max(0, min(event.y, maxheight))
-##    gx = x//settings.tile_size + xoffset
-##    gy = y//settings.tile_size + yoffset
-##    cx = gx * settings.tile_size
-##    cy = gy * settings.tile_size
-##    return MouseEvent(event, gx, gy, cx, cy)
-##
-##@mouse_event.register(_TkEvent)
-##def _mouse_event(event, xoffset=0, yoffset=0, maxwidth=None, maxheight=None):
-##    event = _SimpleMouseEvent(event.x, event.y)
-##    return mouse_event(event, xoffset, yoffset, maxwidth, maxheight)
-##
-##@mouse_event.register(tuple)
-##def _mouse_event(event, xoffset=0, yoffset=0, maxwidth=None, maxheight=None):
-##    event = _SimpleMouseEvent(*event)
-##    return mouse_event(event, xoffset, yoffset, maxwidth, maxheight)
-##
-##@mouse_event.register(MouseEvent)
-##def _mouse_event(event, xoffset=0, yoffset=0, maxwidth=None, maxheight=None):
-##    return mouse_event(event._event, xoffset, yoffset, maxwidth, maxheight)
     
 def make_cell_highlight_box(w, h):
     if w > 100 or h > 100:
@@ -228,7 +140,6 @@ def make_cell_highlight_box(w, h):
     return grid
 
 def make_checkerboard(w, h):
-    #666666 # 999999
     dark = Image.new('RGBA', (16, 16), (102, 102, 102, 255))
     lite = Image.new('RGBA', (16, 16), (153, 153, 153, 255))
     bg = Image.new('RGBA', (w*16, h*16))
